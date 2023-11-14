@@ -20,8 +20,8 @@ namespace JWTtoken
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            
-            builder.Services.AddScoped<IAuthService,AuthService>();
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

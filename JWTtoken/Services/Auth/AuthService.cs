@@ -1,4 +1,5 @@
-﻿using JWTtoken.Services.Auth;
+﻿using JWTtoken.Models;
+using JWTtoken.Services.Auth;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,17 +16,17 @@ namespace ADars1.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(string username)
+        public string GenerateToken(UserCreateDto userModel)
         {
             // bu malumotlar
             var claims = new Claim[]
             {
                 // name 
-                new Claim(JwtRegisteredClaimNames.Name, username),
+                new Claim("UserName", userModel.UserName),
                 // identificatori
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("Password",userModel.Password),
                 // vaqti
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()),
 
             };
 
@@ -39,7 +40,7 @@ namespace ADars1.Services
                 _configuration["JWT:ValidIssuer"],
                 _configuration["JWT:ValidAudience"],
                 claims,
-                expires: DateTime.UtcNow.AddDays(1),
+                expires: DateTime.Now.AddSeconds(3),
                 signingCredentials: credentials
                 );
 

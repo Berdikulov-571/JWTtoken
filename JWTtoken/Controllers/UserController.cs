@@ -1,4 +1,5 @@
 ﻿using JWTtoken.Entities;
+using JWTtoken.Models;
 using JWTtoken.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,9 @@ namespace JWTtoken.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ILogger<UserController> _logger;
-        public UserController(IUserService userService,ILogger<UserController> logger)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _logger = logger;
         }
 
         [Authorize]
@@ -29,9 +28,18 @@ namespace JWTtoken.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
-                return BadRequest("Users not Found or some Exception");
+                return NotFound("Users not Found");
             }
+        }
+
+        [HttpPost]
+        public async ValueTask<IActionResult> PostAsync(UserCreateDto createDTO)
+        {
+            bool res = await _userService.CreateAsync(createDTO);
+
+            if(res)
+                return Ok("Sucesfully");
+            return BadRequest("Do Not Created");
         }
     }
 }

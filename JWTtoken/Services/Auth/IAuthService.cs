@@ -1,7 +1,9 @@
-﻿namespace JWTtoken.Services.Auth
+﻿using JWTtoken.Models;
+
+namespace JWTtoken.Services.Auth
 {
     public interface IAuthService
     {
-        public string GenerateToken(string userName);
+        public string GenerateToken(UserCreateDto userModel);
     }
 }

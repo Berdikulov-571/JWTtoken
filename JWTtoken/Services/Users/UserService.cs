@@ -1,5 +1,7 @@
 ﻿using JWTtoken.DataAccess;
 using JWTtoken.Entities;
+using JWTtoken.Models;
+using JWTtoken.Services.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace JWTtoken.Services.User
@@ -11,9 +13,24 @@ namespace JWTtoken.Services.User
         {
             _context = context;
         }
+
+        public async ValueTask<bool> CreateAsync(UserCreateDto userModel)
+        {
+            Users user = new Users();
+            user.UserName = userModel.UserName;
+            user.PasswordHash = Hash512.ComputeHash512(userModel.Password);
+
+            await _context.Users.AddAsync(user);
+            int result = await _context.SaveChangesAsync();
+
+            return result > 0;
+        }
+
         public async ValueTask<IEnumerable<Users>> GetAllUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            IEnumerable<Users> users = await _context.Users.ToListAsync();
+
+            return users;
         }
     }
 }

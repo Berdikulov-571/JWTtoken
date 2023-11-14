@@ -1,3 +1,11 @@
+using JWTtoken.DataAccess;
+using JWTtoken.Services.Auth;
+using JWTtoken.Services.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 namespace JWTtoken
 {
     public class Program
@@ -10,6 +18,32 @@ namespace JWTtoken
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<AuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            
+            builder.Services.AddScoped<IAuthService,AuthService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        // kimga chiqarilgan
+                        ValidateIssuer = true,
+                        // kim tomonidan chiqarilgan
+                        ValidateAudience = true,
+                        // yashash vaqti
+                        ValidateLifetime = true,
+                        // secret keyi
+                        ValidateIssuerSigningKey = true,
+                        ValidAudience = builder.Configuration["JWT:ValidAudience"],
+                        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+                    };
+                });
+
+
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -19,6 +53,8 @@ namespace JWTtoken
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

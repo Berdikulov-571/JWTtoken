@@ -1,24 +1,27 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using JWTtoken.Services.Auth;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace JWTtoken.Services.Auth
+namespace ADars1.Services
 {
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+
         public AuthService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public string GenerateToken(string userName)
+        public string GenerateToken(string username)
         {
+            // bu malumotlar
             var claims = new Claim[]
             {
                 // name 
-                new Claim(JwtRegisteredClaimNames.Name, userName),
+                new Claim(JwtRegisteredClaimNames.Name, username),
                 // identificatori
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 // vaqti
@@ -43,6 +46,7 @@ namespace JWTtoken.Services.Auth
             var tokenHandler = new JwtSecurityTokenHandler();
 
             return tokenHandler.WriteToken(token);
+
         }
     }
 }

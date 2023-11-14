@@ -1,3 +1,4 @@
+using ADars1.Services;
 using JWTtoken.DataAccess;
 using JWTtoken.Services.Auth;
 using JWTtoken.Services.User;
@@ -22,17 +23,17 @@ namespace JWTtoken
             
             builder.Services.AddScoped<IAuthService,AuthService>();
             builder.Services.AddScoped<IUserService, UserService>();
-            
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+                .AddJwtBearer(opttins =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    opttins.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
                         // kimga chiqarilgan
                         ValidateIssuer = true,
-                        // kim tomonidan chiqarilgan
+                        // kim tomonidan berilgan
                         ValidateAudience = true,
-                        // yashash vaqti
+                        // vaqti
                         ValidateLifetime = true,
                         // secret keyi
                         ValidateIssuerSigningKey = true,

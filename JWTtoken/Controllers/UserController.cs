@@ -16,9 +16,25 @@ namespace JWTtoken.Controllers
             _userService = userService;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async ValueTask<IActionResult> GetAllAsync()
+        public async ValueTask<IActionResult> GetAllAsyncForAdmin()
+        {
+            try
+            {
+                IEnumerable<Users> users = await _userService.GetAllUsersAsync();
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return NotFound("Users not Found");
+            }
+        }
+
+        [Authorize(Roles = "Developer")]
+        [HttpGet]
+        public async ValueTask<IActionResult> GetAllAsyncForDeveloper()
         {
             try
             {
@@ -33,7 +49,7 @@ namespace JWTtoken.Controllers
         }
 
         [HttpPost]
-        public async ValueTask<IActionResult> PostAsync(UserCreateDto createDTO)
+        public async ValueTask<IActionResult> PostAsync([FromForm]UserCreateDto createDTO)
         {
             bool res = await _userService.CreateAsync(createDTO);
 

@@ -20,7 +20,7 @@ namespace JWTtoken.Controllers
             _authService = authService;
         }
         [HttpPost]
-        public async ValueTask<IActionResult> Login(UserCreateDto createDto)
+        public async ValueTask<IActionResult> Login([FromForm]UserCreateDto createDto)
         {
             IEnumerable<Users> users = await _userService.GetAllUsersAsync();
 

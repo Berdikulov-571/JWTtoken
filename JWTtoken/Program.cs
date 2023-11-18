@@ -5,6 +5,7 @@ using JWTtoken.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace JWTtoken
@@ -43,6 +44,40 @@ namespace JWTtoken
                     };
                 });
 
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("V1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "AuthDemo",
+                    Description = "Auth Demo Description"
+                });
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    Description = "Bearer Authentication",
+                    Type = SecuritySchemeType.Http
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference = new OpenApiReference()
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string> ()
+                    }
+
+                });
+            });
+
 
 
             var app = builder.Build();
@@ -50,7 +85,10 @@ namespace JWTtoken
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/V1/swagger.json", "Auth Demo API");
+                });
             }
 
             app.UseHttpsRedirection();

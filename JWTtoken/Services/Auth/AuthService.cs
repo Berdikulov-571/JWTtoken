@@ -27,7 +27,7 @@ namespace ADars1.Services
                 new Claim("Password",userModel.Password),
                 // vaqti
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToString()),
-
+                new Claim(ClaimTypes.Role,userModel.Role.ToString()),
             };
 
             // qandedur algoritm boyicha shifrlanadi
